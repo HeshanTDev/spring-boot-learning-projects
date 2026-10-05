@@ -1,7 +1,7 @@
 package com.heshant.bcd.rediscache.config;
 
 
-import com.heshant.bcd.rediscache.entity.Product;
+import com.heshant.bcd.rediscache.dto.ProductDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -21,7 +21,7 @@ public class RedisConfig {
                 .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new JacksonJsonRedisSerializer<>(Product.class)));
+                        .fromSerializer(new JacksonJsonRedisSerializer<>(ProductDto.class)));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(redisCacheConfiguration)

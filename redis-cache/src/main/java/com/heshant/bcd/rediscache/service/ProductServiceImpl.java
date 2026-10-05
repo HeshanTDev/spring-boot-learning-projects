@@ -4,6 +4,9 @@ import com.heshant.bcd.rediscache.dto.ProductDto;
 import com.heshant.bcd.rediscache.entity.Product;
 import com.heshant.bcd.rediscache.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
+    @Cacheable(value = "PRODUCT_CACHE", key = "#id")
     public ProductDto findById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         return new ProductDto(product.getId(), product.getName(), product.getPrice());
@@ -36,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CachePut(value = "PRODUCT_CACHE", key = "#result.id()")
     public ProductDto createProduct(ProductDto productDto) {
         Product product = new Product();
         product.setName(productDto.name());
@@ -47,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CachePut(value = "PRODUCT_CACHE", key = "#result.id()")
     public ProductDto updateProduct(Long id, ProductDto productDto) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -59,6 +65,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "PRODUCT_CACHE", key = "#id")
     public void delete(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         productRepository.delete(product);
