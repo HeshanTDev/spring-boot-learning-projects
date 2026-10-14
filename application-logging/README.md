@@ -30,34 +30,47 @@ This guide explains how to get the project running from a clean clone.
 
 ## 1. Create the database
 
-The application connects to a schema named `application-logging` by default (see the next step if you want a different name). Tables are created automatically by Hibernate (`ddl-auto=update`), so you only need the empty database. Note the backticks — the hyphen requires them:
+The application connects to a schema named `application_logging` by default (change the URL in the next step if you prefer another name). Tables are created automatically by Hibernate (`ddl-auto=update`), so you only need the empty database:
 
 ```sql
-CREATE DATABASE `application-logging`;
+CREATE DATABASE application_logging;
 ```
 
 ---
 
 ## 2. Configure the database connection
 
-`src/main/resources/application.properties` already contains a datasource block. The checked-in values are local development examples — replace them with your own settings:
+`src/main/resources/application.properties` ships with **placeholders** — no real credentials are committed. Either edit that file directly, or (recommended) leave it untouched and put your secrets in a git-ignored override file:
+
+**Option A — git-ignored override (recommended)**
+
+Create `src/main/resources/application-local.properties`. It is already listed in `.gitignore`, so it can never be committed:
 
 ```properties
-spring.application.name=application-logging
+spring.datasource.url=jdbc:mysql://localhost:3306/application_logging
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
 
-spring.datasource.url=jdbc:mysql://localhost:3308/application-logging
+`application.properties` imports this file automatically:
+
+```properties
+spring.config.import=optional:classpath:application-local.properties
+```
+
+Because the import is marked `optional:`, the application still starts when the file is absent.
+
+**Option B — edit `application.properties` directly**
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/application_logging
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
 ```
 
 Adjust the host, port, and database name in the URL to match your MySQL setup. The database name in the URL must match the schema you created in step 1.
 
-> **Never commit real credentials.** Keep your local password in your working copy only, or override it at launch (see below) and leave the file on placeholders.
+> **Never commit real credentials.** Keep your password out of version control, or override it at launch (see below).
 
 ### Overriding credentials without editing the file
 
