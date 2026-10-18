@@ -8,6 +8,8 @@ import com.heshant.bcd.applicationlogging.repository.ProductRepository;
 import com.heshant.bcd.applicationlogging.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +20,14 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+//    private final static Logger logger= LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) {
         log.info("Creating product: {}", productRequestDto.name());
+        log.trace("Product details: {}", productRequestDto);
+
+//        logger.info("add product to db");
 
         Product product = new Product();
         product.setName(productRequestDto.name());
